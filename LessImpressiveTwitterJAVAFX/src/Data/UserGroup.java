@@ -11,16 +11,13 @@ public class UserGroup implements TreeElement{
     private List<TreeElement> elements;
 
     private final boolean leaf = false;
-    private UserGroup root;
 
     public UserGroup(){
         name = "root";
-        root = this;
         elements = new ArrayList<TreeElement>();
     }
 
-    public UserGroup(String name, UserGroup u){
-        root = u;
+    public UserGroup(String name){
         this.name = name;
         elements = new ArrayList<TreeElement>();
     }
@@ -36,7 +33,7 @@ public class UserGroup implements TreeElement{
             return null;
         if(findGroup(location.getName()) == null)
             return null;
-        TreeElement temp = new UserGroup(name, location);
+        TreeElement temp = new UserGroup(name);
         location.addElement(temp);
         return (UserGroup)temp;
     }

@@ -3,14 +3,12 @@ package Data;
 import java.util.ArrayList;
 import java.util.List;
 
-import DataVisitor.TreeElementVisitor;
-import User.User;
+import DataVisitor.CountVisitor;
+import DataVisitor.FindVisitor;
 
 public class UserGroup implements TreeElement{
     private String name;
     private List<TreeElement> elements;
-
-    private final boolean leaf = false;
 
     public UserGroup(){
         name = "root";
@@ -22,76 +20,33 @@ public class UserGroup implements TreeElement{
         elements = new ArrayList<TreeElement>();
     }
 
-    public boolean addElement(TreeElement s){
-        return elements.add(s);
+    public void addElement(TreeElement e) {
+        elements.add(e);
     }
 
-
-
-    public UserGroup addGroup(String name, UserGroup location) {
-        if(findGroup(name) != null)
-            return null;
-        if(findGroup(location.getName()) == null)
-            return null;
-        TreeElement temp = new UserGroup(name);
-        location.addElement(temp);
-        return (UserGroup)temp;
-    }
-
-    public User addUser(String name, UserGroup location){
-        if(findID(name) != null)
-            return null;
-        if(findGroup(location.getName()) == null)
-            return null;
-
-        TreeElement temp = new User(name);
-        location.addElement(temp);
-        return (User)temp;
-    }
-
-    public User findID(String id){
-        for(TreeElement u : elements){
-            if(u instanceof User && ((User)u).getID().equals(id))
-                return (User)u;
-            if(u instanceof UserGroup){
-                User a = ((UserGroup)u).findID(id);
-                if(a == null)
-                    continue;
-                return a;
-            }
-        }
-        return null;
-    }
-
-    public UserGroup findGroup(String group){
-        if(name.equals(group) && this instanceof UserGroup){
-            return this;
-        }
-        for(TreeElement u : elements) {
-            if (u instanceof UserGroup) {
-                UserGroup a = ((UserGroup) u).findGroup(group);
-                if (a == null)
-                    continue;
-                return a;
-            }
-        }
-        return null;
-    }
-
-    public int accept(TreeElementVisitor d){
+    public int accept(CountVisitor d){
         int count = 0;
         for(TreeElement t : elements){
             count += t.accept(d);
         }
-        count += d.count(this);
+        count += d.visit(this);
         return count;
+    }
+
+    public TreeElement accept(FindVisitor d){
+        TreeElement u = d.visit(this);
+        if(u != null)
+            return this;
+        for(TreeElement t: elements){
+            u = t.accept(d);
+            if(u != null)
+                return u;
+        }
+        return null;
     }
 
     public String getName(){
         return name;
     }
 
-    public List<TreeElement> getElements(){
-        return elements;
-    }
 }

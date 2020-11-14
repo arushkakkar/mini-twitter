@@ -2,14 +2,12 @@ package Admin;
 
 import Data.UserGroup;
 import User.User;
-import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import javax.xml.soap.Text;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -46,23 +44,20 @@ public class AdminViewController implements Initializable {
     @FXML
     private void addUserButtonClick(){
         a = Admin.getInstance();
-        String id = UIDTextField.getText();
-        TreeItem selected = (TreeItem)treeView.getSelectionModel().getSelectedItem();
         try {
+
+            String id = UIDTextField.getText();
+            TreeItem selected = (TreeItem)treeView.getSelectionModel().getSelectedItem();
             String group = selected.getValue().toString();
-            User u = a.addUser(id, a.findGroup(group));
-            if (u != null) {
-                TreeItem<String> temp = new TreeItem<String>(id);
-                selected.getChildren().add(temp);
-            }
-            else{
-                Alert a = new Alert(Alert.AlertType.NONE, "User ID may already exist\nPlease select a Group", ButtonType.OK);
-                a.setTitle("Error");
-                a.show();
-            }
+
+            a.addUser(id, group);
+            TreeItem<String> temp = new TreeItem<String>(id);
+            selected.getChildren().add(temp);
         }
         catch(Exception e){
-            Alert a = new Alert(Alert.AlertType.NONE, "Please select a Group from TreeView", ButtonType.OK);
+            String message = e instanceof NullPointerException ? "Please Select a group" : e.getMessage();
+            Alert a = new Alert(Alert.AlertType.NONE, e.getMessage(), ButtonType.OK);
+            a.setTitle("error");
             a.show();
         }
     }
@@ -70,22 +65,19 @@ public class AdminViewController implements Initializable {
     @FXML
     private void addGroupButtonClick(){
         a = Admin.getInstance();
-        String name = GIDTextField.getText();
-        TreeItem selected = (TreeItem)treeView.getSelectionModel().getSelectedItem();
         try {
+            String name = GIDTextField.getText();
+            TreeItem selected = (TreeItem)treeView.getSelectionModel().getSelectedItem();
             String group = selected.getValue().toString();
-            UserGroup u = a.addGroup(name, a.findGroup(group));
-            if (u != null) {
-                TreeItem<String> temp = new TreeItem<String>(name, new ImageView(image));
-                selected.getChildren().add(temp);
-            }
-            else{
-                Alert a = new Alert(Alert.AlertType.NONE, "Group ID may already exist\nPlease select a Group", ButtonType.OK);
-                a.setTitle("Error");
-                a.show();
-            }
-        }catch(Exception e){
-            Alert a = new Alert(Alert.AlertType.NONE, "Please select a Group from TreeView", ButtonType.OK);
+
+            a.addGroup(name, group);
+            TreeItem<String> temp = new TreeItem<String>(name, new ImageView(image));
+            selected.getChildren().add(temp);
+        }
+        catch(RuntimeException e){
+            String message = e instanceof NullPointerException ? "Please Select a group" : e.getMessage();
+            Alert a = new Alert(Alert.AlertType.NONE, message, ButtonType.OK);
+            a.setTitle("error");
             a.show();
         }
     }
@@ -93,15 +85,18 @@ public class AdminViewController implements Initializable {
     @FXML
     private void launchUserViewButtonClick(){
         a = Admin.getInstance();
-        TreeItem selected = (TreeItem)treeView.getSelectionModel().getSelectedItem();
-        String id = selected.getValue().toString();
-        User target = a.findUser(id);
-        if(target == null){
+        try {
+            TreeItem selected = (TreeItem) treeView.getSelectionModel().getSelectedItem();
+            String id = selected.getValue().toString();
+
+            a.launchUserView(id);
+        }
+        catch(RuntimeException e){
             Alert a = new Alert(Alert.AlertType.NONE, "Please select a User from TreeView", ButtonType.OK);
+            a.setTitle("error");
             a.show();
             return;
         }
-        a.launchUserView(target);
     }
 
     @FXML

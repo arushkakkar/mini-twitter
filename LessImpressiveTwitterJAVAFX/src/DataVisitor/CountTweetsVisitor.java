@@ -3,14 +3,14 @@ package DataVisitor;
 import Data.UserGroup;
 import User.User;
 
-public class CountTweetsVisitor implements TreeElementVisitor {
+public class CountTweetsVisitor implements CountVisitor {
 
     @Override
-    public int count(User u) {
+    public Integer visit(User u) {
         return u.getTweets().size();
     }
 
-    public int count(UserGroup u){
+    public Integer visit(UserGroup u){
         return 0;
     }
 

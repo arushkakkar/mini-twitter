@@ -25,56 +25,65 @@ public class Admin {
         AdminUI.startUI(args);
     }
 
-    //ADD/ FIND USER/ GROUP STUFF
-    public User findUser(String id) {
-        return ((UserGroup)root).findID(id);
-    }
-
-    public UserGroup findGroup(String name){
-        return ((UserGroup)root).findGroup(name);
-    }
-
-    protected User addUser(String id, UserGroup target){
+    //ADD GROUP STUFF
+    protected void addUser(String id, String name) throws RuntimeException{
+        if(findUser(id) != null)
+            throw new RuntimeException("This UserID may be taken");
+        UserGroup target = findGroup(name);
         if(target == null)
-            return null;
-        User newUser = ((UserGroup)root).addUser(id, target);
-        if(newUser != null){
-            return newUser;
-        }
-        return null;
+            throw new RuntimeException("Please select a group");
+
+        TreeElement temp = new User(id);
+        target.addElement(temp);
     }
 
-    protected UserGroup addGroup(String name, UserGroup location){
-        UserGroup newGroup = ((UserGroup)root).addGroup(name, location);
-        if(newGroup != null){
-            return newGroup;
-        }
-        return null;
+    protected void addGroup(String name, String targetName) throws RuntimeException{
+        if(findGroup(name) != null)
+            throw new RuntimeException("This Group may already exist");
+        UserGroup target = findGroup(targetName);
+        if(target == null)
+            throw new RuntimeException("Please select a group");
+
+        TreeElement temp = new UserGroup(name);
+        target.addElement(temp);
     }
 
-    protected void launchUserView(User target){
+    //LAUNCH USER VIEW
+    protected void launchUserView(String id){
+        User target = findUser(id);
+        if(target == null)
+            throw new RuntimeException("Please select a user from TreeView");
         target.render();
     }
 
     //VISITOR STUFF
     protected int countUsers(){
-        TreeElementVisitor visitor = new CountUsersVisitor();
+        CountVisitor visitor = new CountUsersVisitor();
         return root.accept(visitor);
     }
 
     protected int countTweets(){
-        TreeElementVisitor visitor = new CountTweetsVisitor();
+        CountVisitor visitor = new CountTweetsVisitor();
         return root.accept(visitor);
     }
 
     protected int countGroups(){
-        TreeElementVisitor visitor = new CountGroupsVisitor();
+        CountVisitor visitor = new CountGroupsVisitor();
         return root.accept(visitor)-1;
     }
 
     private double countPositive(){
-        TreeElementVisitor visitor = new CountPositiveVisitor();
+        CountVisitor visitor = new CountPositiveVisitor();
         return root.accept(visitor);
+    }
+    public User findUser(String id) {
+        FindVisitor f = new FindUserVisitor(id);
+        return (User)root.accept(f);
+    }
+
+    public UserGroup findGroup(String name){
+        FindVisitor f = new FindGroupVisitor(name);
+        return (UserGroup) root.accept(f);
     }
 
     protected double getPositivityRatio(){

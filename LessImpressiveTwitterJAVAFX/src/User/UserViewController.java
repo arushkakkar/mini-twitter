@@ -6,9 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 
-import javax.xml.soap.Text;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,16 +27,15 @@ public class UserViewController implements Initializable {
     @FXML
     private void followUserButtonClick(){
         String id = userNameTextField.getText();
-        if (id.equals(master.getID())){
-            Alert a = new Alert(Alert.AlertType.NONE, "You cannot follow yourself", ButtonType.OK);
-            a.show();
-            return;
+        try {
+            master.follow(id);
         }
-        if(!master.follow(id)) {
-            Alert a = new Alert(Alert.AlertType.NONE, "User does not exist, please enter a valid UserID", ButtonType.OK);
+        catch(RuntimeException e){
+            Alert a = new Alert(Alert.AlertType.NONE, e.getMessage(), ButtonType.OK);
+            a.setTitle("error");
             a.show();
-            return;
         }
+
     }
 
     @FXML

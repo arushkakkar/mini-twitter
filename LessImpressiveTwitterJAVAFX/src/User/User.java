@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Admin.Admin;
+import Data.TreeElement;
 import Data.Tweet;
+import DataVisitor.CountVisitor;
+import DataVisitor.FindVisitor;
 import DataVisitor.TreeElementVisitor;
 import Observer.Observer;
 import Observer.Subject;
@@ -43,9 +46,8 @@ public class User extends Subject implements Observer{
             userStage.setOnCloseRequest(event -> {
                 windowOpen = false;
             });
-        }catch(Exception e){
+        }catch(Exception e){ }
 
-        }
         controller = loader.getController();
         controller.setMaster(this);
     }
@@ -58,15 +60,15 @@ public class User extends Subject implements Observer{
         notifyObservers();
     }
 
-    public boolean follow(String id){
+    public boolean follow(String id) throws RuntimeException{
         Admin a = Admin.getInstance();
         User target = a.findUser(id);
         if(target == null)
-            return false;
-        if(following.contains(target))
-            return false;
+            throw new RuntimeException("Invalid UserID");
         if(id.equals(ID))
-            return false;
+            throw new RuntimeException("You may not follow yourself");
+        if(following.contains(target))
+            throw new RuntimeException("You are already following this user");
 
         following.add(target);
         controller.populateFollowing();
@@ -103,7 +105,11 @@ public class User extends Subject implements Observer{
         return following;
     }
 
-    public int accept(TreeElementVisitor visitor){
-        return visitor.count(this);
+    public int accept(CountVisitor visitor){
+        return visitor.visit(this);
+    }
+
+    public TreeElement accept(FindVisitor visitor){
+        return visitor.visit(this);
     }
 }

@@ -6,18 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Subject implements TreeElement {
-    private List<Observer> observers = new ArrayList<Observer>();
+    private List<Observer> followers = new ArrayList<Observer>();
 
     public void attach (Observer o){
-        observers.add(o);
+        followers.add(o);
     }
 
     public void detach (Observer o){
-        observers.remove(o);
+        followers.remove(o);
     }
 
     public void notifyObservers(){
-        for(Observer o : observers){
+        for(Observer o : followers){
             o.update(this);
         }
     }

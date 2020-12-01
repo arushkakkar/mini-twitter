@@ -9,15 +9,18 @@ import DataVisitor.FindVisitor;
 public class UserGroup implements TreeElement{
     private String name;
     private List<TreeElement> elements;
+    private long creationTime;
 
     public UserGroup(){
         name = "root";
         elements = new ArrayList<TreeElement>();
+        creationTime = System.currentTimeMillis();
     }
 
     public UserGroup(String name){
         this.name = name;
         elements = new ArrayList<TreeElement>();
+        creationTime = System.currentTimeMillis();
     }
 
     public void addElement(TreeElement e) {

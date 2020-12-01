@@ -1,6 +1,8 @@
 package User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import Admin.Admin;
@@ -22,6 +24,8 @@ public class User extends Subject implements Observer{
     private List<Tweet> tweets;
     private List<User> following;
     private List<Tweet> feed;
+    private long creationTime;
+    private long lastUpdatedTime;
 
     private boolean windowOpen;
     private Stage userStage;
@@ -36,12 +40,16 @@ public class User extends Subject implements Observer{
         following = new ArrayList<User>();
         feed = new ArrayList<Tweet>();
         windowOpen = false;
+        creationTime = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+        Date date = new Date(creationTime);
+        lastUpdatedTime = System.currentTimeMillis();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("UserView.fxml"));
         try {
             Parent root = loader.load();
             userStage = new Stage();
-            userStage.setTitle(ID);
+            userStage.setTitle(ID + " (CreationTime: " + sdf.format(date) +")");
             userStage.setScene(new Scene(root, 390, 340));
             userStage.setOnCloseRequest(event -> {
                 windowOpen = false;
@@ -56,6 +64,9 @@ public class User extends Subject implements Observer{
         Tweet t = new Tweet(ID, text);
         tweets.add(t);
         feed.add(t);
+        lastUpdatedTime = System.currentTimeMillis();
+        Admin a = Admin.getInstance();
+        a.findLastUpdatedUser();
         controller.populateFeed();
         notifyObservers();
     }
@@ -103,6 +114,10 @@ public class User extends Subject implements Observer{
 
     public List<User> getFollowing(){
         return following;
+    }
+
+    public long getLastUpdatedTime(){
+        return lastUpdatedTime;
     }
 
     public int accept(CountVisitor visitor){

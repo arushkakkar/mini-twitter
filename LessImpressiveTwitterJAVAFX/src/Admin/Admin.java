@@ -76,6 +76,12 @@ public class Admin {
         CountVisitor visitor = new CountPositiveVisitor();
         return root.accept(visitor);
     }
+
+    public int countInvalidIDs(){
+        CountVisitor visitor = new CountInvalidIDsVisitor();
+        return root.accept(visitor);
+    }
+
     public User findUser(String id) {
         FindVisitor f = new FindUserVisitor(id);
         return (User)root.accept(f);
@@ -84,6 +90,15 @@ public class Admin {
     public UserGroup findGroup(String name){
         FindVisitor f = new FindGroupVisitor(name);
         return (UserGroup) root.accept(f);
+    }
+    public User findLastUpdatedUser(){
+        FindVisitor f = new FindLastUpdatedUserVisitor();
+        root.accept(f);
+        return ((FindLastUpdatedUserVisitor)f).getUser();
+    }
+
+    public boolean checkIDs(){
+        return false;
     }
 
     protected double getPositivityRatio(){

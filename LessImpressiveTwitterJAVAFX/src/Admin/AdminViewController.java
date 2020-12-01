@@ -9,6 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class AdminViewController implements Initializable {
@@ -40,6 +42,9 @@ public class AdminViewController implements Initializable {
     private Button showTweetCountButton;
     @FXML
     private Button showPositivePercentButton;
+
+    @FXML
+    private Button validIDCheckButton;
 
     @FXML
     private void addUserButtonClick(){
@@ -121,6 +126,21 @@ public class AdminViewController implements Initializable {
     private void showPositivePercentButtonClick(){
         a = Admin.getInstance();
         messageLabel.setText("Positivity: " + a.getPositivityRatio() + "%");
+    }
+
+    @FXML
+    private void checkIDs(){
+        a = Admin.getInstance();
+        messageLabel.setText("Invalid ID count: " + a.countInvalidIDs());
+    }
+
+    @FXML
+    private void findLastUpdatedUser(){
+        a = Admin.getInstance();
+        User target = a.findLastUpdatedUser();
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+        Date date = new Date(target.getLastUpdatedTime());
+        messageLabel.setText(target.getID() + " posted at " + sdf.format(date));
     }
 
     @Override

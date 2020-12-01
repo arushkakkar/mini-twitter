@@ -140,7 +140,7 @@ public class AdminViewController implements Initializable {
         User target = a.findLastUpdatedUser();
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
         Date date = new Date(target.getLastUpdatedTime());
-        messageLabel.setText(target.getID() + " posted at " + sdf.format(date));
+        messageLabel.setText(target.getID() + " was updated at " + sdf.format(date));
     }
 
     @Override

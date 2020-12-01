@@ -138,6 +138,10 @@ public class AdminViewController implements Initializable {
     private void findLastUpdatedUser(){
         a = Admin.getInstance();
         User target = a.findLastUpdatedUser();
+        if(target == null){
+            messageLabel.setText("No users exist.");
+            return;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
         Date date = new Date(target.getLastUpdatedTime());
         messageLabel.setText(target.getID() + " was updated at " + sdf.format(date));
